@@ -30,7 +30,7 @@
       padding: 15px;
       margin: 1.5em 0;
     }
-    .note {
+    .note, .important {
       background: #e6f3ff;
       border-left: 5px solid #0366d6;
       padding: 15px;
@@ -40,107 +40,92 @@
     a:hover { text-decoration: underline; }
     ul, ol { margin: 1em 0; padding-left: 2em; }
     li { margin: 0.5em 0; }
-    .anchor { color: #0366d6; text-decoration: none; font-size: 0.9em; margin-left: 0.3em; }
   </style>
 </head>
 <body>
 
 <h1>BTD6 Mods on Linux – Installation Guide</h1>
 
-<p>This guide explains how to get mods working for <strong>Bloons TD 6</strong> on Linux using <strong>MelonLoader</strong> + <strong>BTD Mod Helper</strong> (the standard approach in 2026). Most players run BTD6 via Steam Proton.</p>
+<p>This guide uses the <strong>automated MelonLoader Linux installer</strong> + <strong>BTD Mod Helper</strong> for modding <strong>Bloons TD 6</strong> on Linux (via Steam Proton). Follow the exact order to avoid issues like the Mods folder being wiped.</p>
 
 <p><strong>Last tested/updated:</strong> February 2026</p>
 
 <div class="warning">
-  <strong>Important:</strong> Using mods will flag your account. You will be unable to play ranked modes (Contested Territory, Ranked Boss Events, etc.) with modded saves. Use an alternate account for modding to avoid issues on your main profile.
+  <strong>Important:</strong> Mods disable ranked play (Contested Territory, Ranked Boss Events, etc.) and can flag your account. Use a secondary/alt account for modded play.
 </div>
 
 <h2 id="prerequisites">Prerequisites</h2>
 
 <ul>
-  <li>BTD6 installed via <strong>Steam</strong> (recommended for Proton) or Heroic Launcher (Epic version possible but more fiddly)</li>
-  <li>Proton Experimental or a recent GE-Proton version enabled for BTD6</li>
-  <li><strong>.NET 6.0 runtime</strong> installed in your Wine/Proton prefix (usually required)</li>
-  <li>Basic terminal comfort (you'll run a few commands)</li>
+  <li>BTD6 installed via <strong>Steam</strong> (Proton recommended)</li>
+  <li>Proton Experimental or recent GE-Proton selected for BTD6 in Steam properties</li>
+  <li>Terminal access (for chmod)</li>
 </ul>
 
-<h2 id="install-melonloader">Step 1 – Install MelonLoader</h2>
+<h2 id="install-melonloader">Step 1 – Install MelonLoader (Automated Linux Installer)</h2>
 
 <ol>
-  <li>Follow the official <a href="https://melonwiki.xyz/#/?id=linux-instructions">MelonLoader Linux instructions</a>.</li>
-  <li>For Steam Proton users (most common):
-     <ul>
-       <li>Locate your BTD6 Proton prefix: <code>~/.steam/steam/steamapps/compatdata/960090/pfx/</code></li>
-       <li>Download the latest MelonLoader (alpha or stable — check which works with current BTD6)</li>
-       <li>Use the <strong>manual zip</strong> method or native Linux bootstrap if available</li>
-       <li>Extract/copy MelonLoader files directly into your BTD6 game folder (the one containing <code>BloonsTD6.exe</code>)</li>
-     </ul>
+  <li>Visit the MelonLoader wiki: <a href="https://melonwiki.xyz/#/?id=automated-installation">Automated Installation</a></li>
+  <li>Download the **Linux version** of the installer.</li>
+  <li>Make it executable:
+     <pre><code>chmod +x MelonLoader.Installer.Linux</code></pre>
+     (Adjust filename if needed)
   </li>
-  <li>Set up overrides (important for version.dll):
-     <pre><code>WINEPREFIX=~/.steam/steam/steamapps/compatdata/960090/pfx/ winecfg</code></pre>
-     In the Libraries tab: add <code>version</code> → set to <strong>native, builtin</strong> (or builtin, native — test both if issues)
+  <li>Run it:
+     <pre><code>./MelonLoader.Installer.Linux</code></pre>
   </li>
-  <li>Install .NET 6 if not already present:
-     <pre><code>WINEPREFIX=~/.steam/steam/steamapps/compatdata/960090/pfx/ winetricks dotnet6</code></pre>
-     Or use <code>protontricks 960090 dotnet6</code> if you have protontricks installed.
+  <li>Select **Bloons TD 6** (it should auto-detect via Steam; if not, browse to <code>~/.steam/steam/steamapps/common/Bloons TD 6/</code>).</li>
+  <li>Choose the latest compatible version (stable or alpha/nightly — check BTD6 modding communities for current recommendation).</li>
+  <li>Install. It copies files to your BTD6 folder (including <code>version.dll</code> and <code>MelonLoader/</code> folder).</li>
+</ol>
+
+<h2 id="steam-launch-options">Step 2 – Set Steam Launch Options</h2>
+
+<ol>
+  <li>Right-click Bloons TD 6 in Steam → Properties → General → Launch Options</li>
+  <li>Add exactly:
+     <pre><code>WINEDLLOVERRIDES="version=n,b" %command%</code></pre>
   </li>
 </ol>
 
-<h2 id="install-mod-helper">Step 2 – Install BTD Mod Helper</h2>
+<p>This ensures MelonLoader loads correctly under Proton.</p>
+
+<h2 id="first-launch">Step 3 – Initialize MelonLoader</h2>
 
 <ol>
-  <li>Download the latest <code>Btd6ModHelper.dll</code> from:
-    <a href="https://github.com/gurrenm3/BTD-Mod-Helper/releases/latest/download/Btd6ModHelper.dll">Direct link</a>
-  </li>
-  <li>In your BTD6 game folder, create a <code>Mods</code> folder if it doesn't exist</li>
-  <li>Place <code>Btd6ModHelper.dll</code> inside the <code>Mods</code> folder</li>
+  <li>Launch BTD6 through Steam.</li>
+  <li>MelonLoader initializes on first run — the game loads (may take longer), then you can exit/close it normally (or it may close itself).</li>
+  <li>This creates necessary folders like <code>Mods/</code>, <code>Plugins/</code>, and configs in your BTD6 game directory.</li>
 </ol>
 
-<div class="note">
-  <strong>Tip:</strong> The folder structure should look like:<br>
-  <code>BloonsTD6/</code><br>
-  ├─ BloonsTD6.exe<br>
-  ├─ version.dll  (from MelonLoader)<br>
-  ├─ MelonLoader/<br>
-  └─ Mods/<br>
-     └─ Btd6ModHelper.dll
+<div class="important">
+  <strong>Critical:</strong> Do NOT create a <code>Mods</code> folder manually before this first launch. If you do, MelonLoader may wipe/delete/overwrite it during initialization, causing issues.
 </div>
 
-<h2 id="install-mods">Step 3 – Installing Mods</h2>
+<h2 id="install-mod-helper">Step 4 – Install BTD Mod Helper (After First Launch)</h2>
 
 <ol>
-  <li>Launch the game once with MelonLoader + Mod Helper installed → it should generate config files and show a mod menu</li>
-  <li>Use the in-game Mod Browser (via Mod Helper) to download and enable mods directly — easiest method</li>
-  <li>Alternatively, download .dll mods from GitHub and place them in the <code>Mods</code> folder</li>
-  <li>Restart the game after adding mods</li>
+  <li>Now that the <code>Mods</code> folder exists (created by the first launch), download the latest <code>Btd6ModHelper.dll</code>:
+    <a href="https://github.com/gurrenm3/BTD-Mod-Helper/releases/latest/download/Btd6ModHelper.dll">Direct download</a>
+  </li>
+  <li>Go to your BTD6 game folder (e.g. <code>~/.steam/steam/steamapps/common/Bloons TD 6/</code>).</li>
+  <li>Place <code>Btd6ModHelper.dll</code> directly into the existing <code>Mods</code> folder.</li>
 </ol>
 
-<h2 id="troubleshooting">Troubleshooting</h2>
+<h2 id="second-launch">Step 5 – Verification</h2>
 
-<h4 id="game-crashes-on-launch">Game crashes / doesn't start</h4>
-<ul>
-  <li>Make sure .NET 6 is installed in the prefix</li>
-  <li>Check version.dll override in winecfg</li>
-  <li>Try a different Proton version (GE-Proton often works better)</li>
-  <li>Delete <code>MelonLoader</code> folder and reinstall MelonLoader</li>
-</ul>
+<ol>
+  <li>Launch BTD6 again through Steam.</li>
+  <li>You should now see the Mod Helper UI/menu in-game (e.g., a mods button or overlay — usually in the main menu or bottom-right).</li>
+</ol>
 
-<h4 id="no-mod-menu">No mod menu / Mod Helper not loading</h4>
-<ul>
-  <li>Confirm <code>Btd6ModHelper.dll</code> is in <code>Mods/</code> (not Plugins/ or root)</li>
-  <li>Check <code>Latest.log</code> in <code>MelonLoader/Logs/</code> for errors</li>
-</ul>
+<h2 id="install-mods">Step 6 – Adding More Mods</h2>
 
-<h4 id="black-screen-hang">Black screen / infinite loading</h4>
-<ul>
-  <li>Disable conflicting mods one by one</li>
-  <li>Verify game files in Steam</li>
-  <li>Try <code>PROTON_LOG=1 %command%</code> in launch options to generate logs</li>
-</ul>
-
-<p>If you run into something not covered here, check the MelonLoader Discord, BTD6 modding communities on Reddit/Discord, or open an issue on your repo.</p>
-
-<p><small>Template inspired by clean & readable modding docs like FTL Hyperspace. Feel free to fork & improve!</small></p>
+<ol>
+  <li>Use the in-game Mod Browser (via BTD Mod Helper) to download/enable mods — easiest and safest.</li>
+  <li>Or manually: Download .dll files and drop them into the <code>Mods</code> folder.</li>
+  <li>Restart the game to load new mods.</li>
+</ol>
 
 </body>
 </html>
